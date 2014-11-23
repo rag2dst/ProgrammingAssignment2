@@ -6,7 +6,7 @@
 # makeCacheMatrix must be called first to initialise the cache and the list
 # of functions.
 # The set function is then called to store the matrix to be inverted (in x),
-# and to initialise the result buffer (m).
+# and to initialise the result cache (m).
 # cacheSolve returns the inverted matrix from the cache, if already available,
 # or computes it and then sets the cache.
 # The fundamental programming model is that of a Closure with non-local
@@ -14,13 +14,13 @@
 
 ## Write a short comment describing this function
 # The makeCacheMatrix function is an initialisation function to establish a
-# buffer m and a list of functions. The list is returned when makeCache Matrix
+# cache m and a list of functions. The list is returned when makeCache Matrix
 # is called, and m is preserved until the calling environment is destroyed.
 makeCacheMatrix <- function(x = matrix()) {
-        m<-NULL                 # mark cache matrix as NULL
+        m<-NULL                 # mark cache m as NULL
         set <-function(y) {
                 x<<-y           # y is the matrix to be inverted
-                m<<- NULL       # mark cache matrix as NULL
+                m<<- NULL       # mark cache m as NULL
         }
         get<-function() x
         setinverse<-function(inverse) m<<-inverse       #set inverse stores the
@@ -31,7 +31,7 @@ makeCacheMatrix <- function(x = matrix()) {
 
 
 ## Write a short comment describing this function
-# The cacheSolve function checks the buffer m to see if it already contains a
+# The cacheSolve function checks the cache m to see if it already contains a
 # valid solved matrix. If so it returns that value, otherwise the solve
 # function is called on the given matrix to invert (or otherwise solve) it.
 cacheSolve <- function(x, ...) {
@@ -39,7 +39,7 @@ cacheSolve <- function(x, ...) {
         m<-x$getinverse         # set m to the cached inverse matrix
         # The value of m may either be NULL, or an actual inverted matrix
         if(!is.null(m)) {
-                # The cache contained a valid inverted matrix
+                # The cache m contained a valid inverted matrix
                 message("Getting cached data")
                 return (m)      # And return the cached data
         }
@@ -47,6 +47,6 @@ cacheSolve <- function(x, ...) {
         data<-x$get()           # apply get method to x to set the value of
                                 # data (to be solved)
         m<-solve(data, ...)     # invert (or otherwise solve) the matrix data
-        x$setinverse(m)         # and store the result in the buffer
+        x$setinverse(m)         # and store the result in the cache
         m                       # Return the freshly inverted matrix
 }
